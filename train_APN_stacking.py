@@ -8,8 +8,8 @@ import action_data.action_data_folding as action_data
 from dataloader import APNDataset
 
 parser=argparse.ArgumentParser()
-parser.add_argument('--exp_apn',type=str,require=True,default='',help='the configuration file with parameters of model')
-parser.add_argument('--seed',type=int,default=0,require=True,help='random seed')
+parser.add_argument('--exp_apn',type=str,required=True,default='',help='the configuration file with parameters of model')
+parser.add_argument('--seed',type=int,default=999,required=True,help='random seed')
 parser.add_argument('--chpnt_path',type=str,default='',help='the path to the checkpoint file')
 parser.add_argument('--generate_new_splits',type=int,default=1,help='generate new splits for data generation')
 parser.add_argument('--num_workers',type=int,default=0,help='the number of data loading workers')
@@ -19,6 +19,7 @@ parser.add_argument('--eval_apn',type=int,default=1,help='evaluate the trained a
 parser.add_argument('--cuda',type=bool,default=False,help='enable cuda computing')
 args_opt=parser.parse_args()
 
+random_seed=args_opt.seed
 apn_exp_name=args_opt.exp_apn+'_seed'+str(args_opt.seed)
 apn_config_file=os.path.join('.','configs',args_opt.exp_apn+'.py')
 apn_directory=os.path.join('.','models',apn_exp_name)
@@ -29,16 +30,16 @@ if not os.path.isdir(apn_directory):
 apn_config=SourceFileLoader(args_opt.exp_apn,apn_config_file).load_module().config
 apn_config['model_opt']['exp_name']=apn_exp_name
 apn_config['model_opt']['exp_dir']=apn_directory
-apn_config['model_opt']['random_seed']=args_opt.seed
+apn_config['model_opt']['random_seed']=random_seed
 print ('*- Load experiment %s from file %s'%(args_opt.exp_apn,apn_config_file))
 print ('*- Logs, snapshots and models are stored on %s'%(apn_directory))
 
 #Generate APN splits
 if args_opt.get_new_splits:
-    print ('*- Generate new APN data splits with random seed:',args_opt.seed)
+    print ('*- Generate new APN data splits with random seed:',random_seed)
     path_to_orginal_dataset=apn_config['data_orginal_opt']['path_to_original_data']
     orginal_dataset_name=apn_config['data_orginal_opt']['original_dataset_name']
-    action_data.get_new_splits(orginal_dataset_name,path_to_orginal_dataset,args_opt.seed)
+    action_data.get_new_splits(orginal_dataset_name,path_to_orginal_dataset,random_seed)
 
 #Generate APN data
 if args_opt.generate_new_data:
