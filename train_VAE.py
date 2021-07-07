@@ -46,9 +46,9 @@ test_dataset=TripletTensorDataset(
     split=data_test_opt['split']
 )
 
-assert(train_dataset.dataset_name=test_dataset.dataset_name)
-assert(train_dataset.split='train')
-assert(test_dataset.split='test')
+assert(train_dataset.dataset_name==test_dataset.dataset_name)
+assert(train_dataset.split=='train')
+assert(test_dataset.split=='test')
 
 if args_opt.num_workers is not None:
     num_workers=args_opt.num_workers
